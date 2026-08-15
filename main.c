@@ -62,10 +62,21 @@ void cadastrarAluno(Aluno *aluno) {
 }
 
 void exibirAluno(const Aluno *aluno) {
-    printf("\n=== Dados do Aluno ===\n");
-    printf("Nome: %s\n", aluno->nome);
-    printf("Idade: %d\n", aluno->idade);
-    printf("Nota: %.2f\n", aluno->nota);
+    printf("\n+----------------------------------+\n");
+    printf("|       DADOS DO ALUNO             |\n");
+    printf("+----------------------------------+\n");
+    printf("| Nome:  %-30s |\n", aluno->nome);
+    printf("| Idade: %-30d |\n", aluno->idade);
+    printf("| Nota:  %-30.2f |\n", aluno->nota);
+    printf("+----------------------------------+\n");
+
+    if (aluno->nota >= 7.0) {
+        printf("Status: APROVADO\n");
+    } else if (aluno->nota >= 5.0) {
+        printf("Status: RECUPERACAO\n");
+    } else {
+        printf("Status: REPROVADO\n");
+    }
 }
 
 int main() {
