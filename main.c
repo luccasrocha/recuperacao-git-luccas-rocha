@@ -9,15 +9,56 @@ typedef struct {
     float nota;
 } Aluno;
 
+void limparBuffer() {
+    int c;
+    while ((c = getchar()) != '\n' && c != EOF);
+}
+
+int lerInteiro(const char *mensagem, int min, int max) {
+    int valor;
+    while (1) {
+        printf("%s", mensagem);
+        if (scanf("%d", &valor) == 1 && valor >= min && valor <= max) {
+            limparBuffer();
+            return valor;
+        }
+        limparBuffer();
+        printf("Valor invalido! Digite um numero entre %d e %d.\n", min, max);
+    }
+}
+
+float lerFloat(const char *mensagem, float min, float max) {
+    float valor;
+    while (1) {
+        printf("%s", mensagem);
+        if (scanf("%f", &valor) == 1 && valor >= min && valor <= max) {
+            limparBuffer();
+            return valor;
+        }
+        limparBuffer();
+        printf("Valor invalido! Digite um numero entre %.1f e %.1f.\n", min, max);
+    }
+}
+
+void lerString(const char *mensagem, char *buffer, int tamanho) {
+    while (1) {
+        printf("%s", mensagem);
+        if (fgets(buffer, tamanho, stdin) != NULL) {
+            buffer[strcspn(buffer, "\n")] = '\0';
+            if (strlen(buffer) > 0) {
+                return;
+            }
+        }
+        printf("Nome nao pode ser vazio!\n");
+    }
+}
+
 void cadastrarAluno(Aluno *aluno) {
-    printf("=== Cadastro de Aluno ===\n");
-    printf("Nome: ");
-    scanf(" %[^\n]", aluno->nome);
-    printf("Idade: ");
-    scanf("%d", &aluno->idade);
-    printf("Nota: ");
-    scanf("%f", &aluno->nota);
-    printf("Aluno cadastrado com sucesso!\n");
+    printf("\n=== Cadastro de Aluno ===\n");
+    lerString("Nome: ", aluno->nome, MAX_NOME);
+    aluno->idade = lerInteiro("Idade: ", 1, 120);
+    aluno->nota = lerFloat("Nota: ", 0.0, 10.0);
+    printf("\nAluno cadastrado com sucesso!\n");
 }
 
 void exibirAluno(const Aluno *aluno) {
@@ -28,8 +69,9 @@ void exibirAluno(const Aluno *aluno) {
 }
 
 int main() {
-    Aluno aluno;
+    Aluno aluno = {0};
     int opcao;
+    int alunoCadastrado = 0;
 
     do {
         printf("\n=== Sistema de Cadastro de Alunos ===\n");
@@ -37,14 +79,25 @@ int main() {
         printf("2. Exibir aluno\n");
         printf("3. Sair\n");
         printf("Escolha uma opcao: ");
-        scanf("%d", &opcao);
+
+        if (scanf("%d", &opcao) != 1) {
+            limparBuffer();
+            printf("Opcao invalida!\n");
+            continue;
+        }
+        limparBuffer();
 
         switch (opcao) {
             case 1:
                 cadastrarAluno(&aluno);
+                alunoCadastrado = 1;
                 break;
             case 2:
-                exibirAluno(&aluno);
+                if (alunoCadastrado) {
+                    exibirAluno(&aluno);
+                } else {
+                    printf("\nNenhum aluno cadastrado ainda!\n");
+                }
                 break;
             case 3:
                 printf("Encerrando programa...\n");
